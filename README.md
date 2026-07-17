@@ -35,6 +35,7 @@ flywheel-harness hosts that loop. It is not a model server and not a coding agen
 5. **Interaction manifests** — no component arms without declaring its reads/writes of shared resources.
 6. **Append-only data** — sessions are archived, never deleted; all indexes are derived and rebuildable.
 7. **The foreman is part of the system** — brief → plan → gate → execute → verify → escalate runs as infrastructure, with the human at the approval points only.
+8. **Incidents discharge as tests, not lessons** — every codified failure gains a deterministic regression test where possible, and its fix is code (permissions, cgroups, schema) rather than LLM instruction. Prompt-level fixes are labeled stopgaps.
 
 Every principle traces to a real production failure on the reference deployment. The
 incident log is part of the documentation: this harness exists because "just prompt the
