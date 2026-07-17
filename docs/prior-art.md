@@ -77,3 +77,24 @@ survive contact with a live system; structure does.
 - **PhyAgentOS** (embodied robotics runtime) and **iii-experimental/agentos** (stale
   worker-mesh chassis; "evolves itself" is lineage tracking, not self-modification)
   — no overlap with the governed loop.
+
+## Third sweep (full "agent os" search-space triage, ~50 repos)
+
+The verdict holds — with its first genuine asterisk. **xg-gh-25/SwarmAI** (a solo
+25-star personal system with unusually honest post-mortems) independently converged
+on this project's core philosophy from its own failures: constitution files its
+evolution engine physically cannot write, and recurrence-driven escalation where a
+repeating failure class becomes a *code gate*, not another lesson — their words:
+"rules don't stop the pattern, only gates do." Not adoptable (platform-bound,
+veto-after-action rather than approve-before-apply), but the strongest independent
+validation found in any sweep. Also assessed: **smartcomputer-ai/agent-os** (the
+governed loop reimagined as a Rust/WASM kernel — propose → shadow → approve → apply
+with signed receipts; self-describedly not production-ready) and **KbWen/agentic-os**
+(deterministic FAIL-blocking work-trail gates, aimed at user projects rather than
+itself). The 5k-star buildermethods/agent-os is a name collision: guidance, no
+enforcement.
+
+Adopted ideas from this sweep: **blast-radius tiering** (auto-deploy low-risk changes
+behind confidence + guaranteed rollback; human gate reserved for constitution-class
+changes), **shadow runs** (rehearse a platform change against a replayable fork
+before apply), and **risk-scaled gate paths** (rigor proportional to change class).
