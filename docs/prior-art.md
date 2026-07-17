@@ -55,3 +55,25 @@ The reference deployment's own history — false completion claims, an agent edi
 the very script supervising it, gate-FAIL verdicts rationalized away — is the
 argument for every mechanism above. "Prompt the agent to be careful" does not
 survive contact with a live system; structure does.
+
+## Second sweep (owner-supplied candidates)
+
+- **Q00/ouroboros** — the important negative result: healthy, real, and despite the
+  name it governs the *output* (an immutable project spec whose evaluation re-seeds
+  the next generation), not the *modifier* — its own platform is hand-maintained.
+  Adopted idea: the gate-economics ladder (free mechanical checks → single model →
+  multi-model consensus only as an escalation tier) and 4-pattern stagnation
+  detection for stuck sessions.
+- **ninjahawk/hollow-agentOS** — the closest living sibling found to date: agents do
+  modify their own running system, through peer-reviewed change proposals, a human
+  implementation queue, and a deterministic claims-vs-codebase gate. But the
+  authority relationship is deliberately inverted ("the human is a tool the agents
+  call"), with no binding constitution, no git audit trail, and no incident→test
+  pipeline. Independent convergence on fragments of this design, from the opposite
+  philosophy. Adopted ideas: two-independent-sightings promotion before a distilled
+  lesson becomes an injected rule; artifact claims fact-checking as a verification
+  beacon; metric-tied mechanical capability locks ("you can't talk your way out of
+  a tripped threshold").
+- **PhyAgentOS** (embodied robotics runtime) and **iii-experimental/agentos** (stale
+  worker-mesh chassis; "evolves itself" is lineage tracking, not self-modification)
+  — no overlap with the governed loop.
