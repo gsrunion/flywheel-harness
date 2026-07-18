@@ -98,3 +98,26 @@ Adopted ideas from this sweep: **blast-radius tiering** (auto-deploy low-risk ch
 behind confidence + guaranteed rollback; human gate reserved for constitution-class
 changes), **shadow runs** (rehearse a platform change against a replayable fork
 before apply), and **risk-scaled gate paths** (rigor proportional to change class).
+
+## Microsoft Agent Governance Toolkit (deep-read, 2026-07)
+
+The strongest external validation on record — and the clearest proof of the gap.
+AGT (MIT, actively shipped) implements this project's philosophy for *runtime action
+governance*: deterministic interception before the wire, Rego policies, fail-closed
+verdicts, hash-chained audit, escalate-to-human as a first-class outcome. Their words:
+denied actions are "structurally impossible… the difference between asking an agent
+to behave and making it incapable of misbehaving."
+
+What it does not do is the thing this project is: govern an agent modifying its own
+platform. Their roadmap punts a "constitutional constraint layer" to the community;
+their audit records *attempts* while a foreman verifying *outcomes* sits on their
+wishlist ("outcome attestation"); and their in-process enforcement boundary is
+precisely what a self-modifying agent can rewrite — the reason this project enforces
+out-of-process, at the git choke point, with filesystem-immutable governance files.
+
+Adopted ideas: the ACS manifest shape (named intervention points, per-point policy
+binding, a five-verdict vocabulary, a reserved fail-closed error namespace); their
+audit-entry schema and "Decision BOM"; **decision-trace replay** — regression-testing
+constitution changes against the recorded history of past gate decisions; content-hash
+pinning of governance files; and the hard lesson from their own limitations doc: an
+empty policy set must be a FAIL, never a silent allow.
