@@ -1,7 +1,11 @@
 # Extraction roadmap
 
 Components are cut from the reference deployment as their generalized versions land
-there first (nothing is published untested). Order:
+there first (nothing is published untested). Reference-deployment status: gate floor,
+immutable kernel, supervision (queue + cgroup caps + stall watch + privilege shim),
+eval parallel-run, cloud fallback (chaos-proven), and a 70+-test incident-derived
+regression suite are LIVE there; the foreman loop is in build. Extraction begins
+once the loop passes its own gates. Order:
 
 1. **Mock endpoint + CI harness** (here from day one) — echo-mock `/v1` server; every
    harness behavior testable with no model.

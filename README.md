@@ -1,6 +1,6 @@
 # flywheel-harness
 
-**A governed, self-improving agent harness. Bring your own model. Bring your own agent.**
+**A governed, self-improving agent harness — an evolution control plane. Bring your own model. Bring your own agent.**
 
 Most "agent OS" projects give an agent memory and skills. Almost none govern what the
 agent is allowed to do to the system it runs on â€” and none ship the full loop: an agent
