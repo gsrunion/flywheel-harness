@@ -198,3 +198,30 @@ identify violations"]
 - **gate-assertions.yaml**: 18 hardcoded pattern tests that verify the model can correctly identify code patterns (ROOT-FILE-WRITE-NO-SUDO, SET-E-IN-LONG-RUNNER, etc.). Uses openai:chat:ornith provider through proxy with X-Session-Id: gate-eval.
 - **Provider wiring**: stock openai:chat:ornith works through proxy. Deleted dead provider attempts (custom-provider.mjs, pf-provider.js/mjs/yaml, provider-config.yaml).
 - **NOTE**: Model is currently failing all 18 assertion tests — this indicates the assertions need refinement or the model needs prompting adjustments. Not a script bug.
+
+## Privilege guard + cloud fallback + foreman loop (2026-07-18)
+
+```mermaid
+flowchart TB
+    subgraph guard["Privilege guard (incident-2 discharge)"]
+        L["pi-run / pi-queue launch"] -->|"PATH prepend"| SH["engineer-sudo shim"]
+        SH -->|"systemctl stop/restart llama|nginx,\ngate-dir tamper, sudoers edit"| DENY["DENY rc=77 + log"]
+        SH -->|"anything else"| FWD["log + forward to /usr/bin/sudo"]
+    end
+    subgraph fb["Cloud fallback (chaos-proven)"]
+        C[client] --> H1["hop-1 :8080\n+ X-LLM-Fallback-* headers\n(empty when X-No-Fallback)"]
+        H1 --> H2["hop-2 :8082\nproxy_pass primary upstream"]
+        H2 -->|"502/504"| NF["@cloud_fallback\nguard: empty header => 502\nlazy body: model swapped to adviser"]
+        NF --> CLOUD["free cloud tier"]
+        H2 -->|"200"| LLM["local llama.cpp"]
+    end
+    subgraph loop["Foreman loop (skeleton GATED CLEAN; timer NOT armed)"]
+        Q["~/kb/queue/*.md briefs\n(frontmatter: risk-class, collar)"] --> FL["foreman-loop.sh"]
+        FL --> PW["plan -> gate (IMMUTABLE KERNEL)\n-> review -> execute -> verify\n-> changelog -> LEARNED"]
+        PW -->|"approve/deny"| TG2["Telegram owner gate"]
+        PW -->|"same-step fail x2"| ESC["STOP + alert"]
+        FL -->|"capability-manifest.yaml"| CAP["vehicles, collar sizing,\ninterlocks, parallel lanes"]
+    end
+    subgraph dr["Disaster recovery"]
+        KBGIT["~/kb git (canonical)"] -->|"post-commit hook, async"| MIR["github.com/gsrunion/steve-llm-kb\n(private mirror)"]
+    end
