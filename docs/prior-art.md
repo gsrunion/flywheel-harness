@@ -121,3 +121,17 @@ audit-entry schema and "Decision BOM"; **decision-trace replay** — regression-
 constitution changes against the recorded history of past gate decisions; content-hash
 pinning of governance files; and the hard lesson from their own limitations doc: an
 empty policy set must be a FAIL, never a silent allow.
+
+## Engraphis (memory-engine convergence, 2026-07)
+
+A local-first memory engine for coding agents (SQLite, hybrid recall, MCP) — no
+overlap with the governed loop, but the strongest independent convergence yet on
+this project's *deterministic-then-model* doctrine: its writes are deterministically
+conflict-resolved with the LLM supervisor explicitly "bounded, clamped, audited,
+never able to silently drop a write," and its idle-time "auto-dreaming" consolidation
+mirrors the librarian. Too young to adopt (weeks-old solo beta, torch-coupled
+extras). Adopted ideas: retention scoring (decay + reinforcement-on-recall ranking
+what gets injected), bi-temporal supersession (contradictions invalidate rather than
+overwrite, keeping the belief chain queryable), dual-trigger consolidation (material
+threshold AND idle window), and a deterministic conflict taxonomy applied before any
+model involvement.
