@@ -15,7 +15,7 @@ human owner's approve/deny on a phone.
 
 Bring your own model (any OpenAI-compatible `/v1` endpoint) and your own agent (a
 pluggable worker). flywheel-harness is the governance around them — not another model,
-not another orchestrator.
+not another orchestrator. It is best understood as **a governed agile team you staff with pluggable agents** — you stay Product Owner; the process itself is the product. See [docs/ROLES.md](docs/ROLES.md).
 
 ```mermaid
 flowchart TB
