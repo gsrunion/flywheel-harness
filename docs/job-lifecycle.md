@@ -37,17 +37,29 @@ stateDiagram-v2
 
 ## The phases
 
-| # | State | What it does | Fail-closed? |
-|---|---|---|---|
-| 0 | **Picked** | Oldest pending brief in the queue; marked `running` | — |
-| 1 | **Planning** | Engineer generates a `## Plan` (its own model, supervised session); skipped if the brief is pre-seeded | Yes — timeout ⇒ Failed |
-| 2 | **Gating** | Deterministic layer-1 (lint/parse/policy from the immutable kernel) then model review; FAIL is terminal, zero model calls on a layer-1 fail | Yes — FAIL ⇒ Failed |
-| 3 | **Reviewing** | Advisory model review (optional cloud second lens); **non-fatal** — its failure is logged, never blocks and never pages the owner | n/a — always continues |
-| 4a | **ApprovalGate** | If the brief requires approval, halt and alert the owner; poll for approve/deny | Yes — deny ⇒ Denied |
-| 4b | **Executing** | Engineer does the work, creates the artifact, commits it | Yes — error ⇒ Failed |
-| 5 | **Verifying** | Execution beacons from the brief's `## Verify` contract must resolve; **zero beacons is a FAIL**, never a silent pass | Yes — missing/zero ⇒ Failed |
-| 6 | **Recording** | Changelog updated (non-fatal) | n/a |
-| 7 | **Learning** | LEARNED items + regression tests written (non-fatal) | n/a |
+Each state maps to an agile role — the lifecycle is a kanban board, and the phase
+transitions are the role hand-offs (see [ROLES.md](ROLES.md)).
+
+| # | State | Agile role | What it does | Fail-closed? |
+|---|---|---|---|---|
+| 0 | **Picked** | Scrum Master | Foreman pulls the oldest pending brief off the backlog; marked `running` | — |
+| 1 | **Planning** | Developer | Engineer generates a `## Plan` (its own model, supervised session); skipped if pre-seeded | Yes — timeout ⇒ Failed |
+| 2 | **Gating** | QA (CI) + Code Reviewer | Deterministic layer-1 (lint/parse/policy from the immutable kernel) then model review; FAIL is terminal, zero model calls on a layer-1 fail | Yes — FAIL ⇒ Failed |
+| 3 | **Reviewing** | Code Reviewer (2nd lens) | Advisory model review (optional cloud lens); **non-fatal** — logged, never blocks or pages | n/a — always continues |
+| 4a | **ApprovalGate** | **Product Owner** | If the brief requires approval, halt and alert the owner; poll for approve/deny | Yes — deny ⇒ Denied |
+| 4b | **Executing** | Developer | Engineer does the work, creates the artifact, commits it | Yes — error ⇒ Failed |
+| 5 | **Verifying** | QA (acceptance) — *distrustful* | Execution beacons from the brief's `## Verify` contract must resolve; **zero beacons is a FAIL**, never a silent pass | Yes — missing/zero ⇒ Failed |
+| 6 | **Recording** | Scrum Master | Changelog updated (non-fatal) | n/a |
+| 7 | **Learning** | Retrospective (Librarian) | LEARNED items + regression tests written (non-fatal) | n/a |
+| — | **Done / Denied / Failed** | Product Owner accepts / rejects | Done = increment accepted; Denied = PO rejection; Failed = QA/SM rejection | — |
+
+The **Foreman wears three hats** across the board — Scrum Master at the edges (Picked,
+Recording, cadence), the *skeptical* QA-lead at Verifying ("prove it" rather than trust),
+and the driver of every hand-off. The **Developer** owns the two doing-states (Planning,
+Executing); the **Product Owner** owns exactly the two gates a machine can't verify
+(ApprovalGate, final acceptance); the **Librarian** owns the retro. Two role-breaks from
+ROLES.md sit right on the board: Verifying is QA that *distrusts* the developer, and
+Learning is a dedicated retro *state* only because the developers are amnesiac.
 
 ## The three ⚠ gaps (drill-1 findings → next build)
 
