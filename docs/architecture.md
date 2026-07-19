@@ -10,13 +10,13 @@ solid = LIVE today; dashed = planned (phase tag in label).
 flowchart TB
     C[clients: pi workers / curl / n8n / demo container]
     C --> N["nginx :8080 + njs session-store.njs"]
-    N -->|"inject CONTEXT.md + role\n(ONE merged system message)"| L["llama.cpp :18080\nOrnith 35B, 4 slots\n(slot picked by llama)"]
-    N -->|"cloud role frontmatter"| H2["hop-2 :8082"] --> CLOUD["cloud:adviser\n(free tier)"]
+    N -->|"inject CONTEXT.md + role<br/>(ONE merged system message)"| L["llama.cpp :18080<br/>Ornith 35B, 4 slots<br/>(slot picked by llama)"]
+    N -->|"cloud role frontmatter"| H2["hop-2 :8082"] --> CLOUD["cloud:adviser<br/>(free tier)"]
     L -->|"SSE response streams back"| N
-    N -->|"body filter reassembles, then appends"| SF["/srv/llm/sessions/YYYY-MM/&lt;X-Session-Id&gt;.jsonl\n(append-only, per session)"]
-    N -.->|"PH2: top-k FTS subrequest"| MEM["memory service\n(loopback FTS5)"]
-    W["watchdog.timer 15s\n(model-free probes)"] -->|"/v1/models"| N
-    N -->|"probes + null-session:\naccess log ONLY"| AL["nginx access log"]
+    N -->|"body filter reassembles, then appends"| SF["/srv/llm/sessions/YYYY-MM/&lt;X-Session-Id&gt;.jsonl<br/>(append-only, per session)"]
+    N -.->|"PH2: top-k FTS subrequest"| MEM["memory service<br/>(loopback FTS5)"]
+    W["watchdog.timer 15s<br/>(model-free probes)"] -->|"/v1/models"| N
+    N -->|"probes + null-session:<br/>access log ONLY"| AL["nginx access log"]
 ```
 
 ## Periodic flows (systemd user timers, not cron)
@@ -24,11 +24,11 @@ flowchart TB
 ```mermaid
 flowchart TB
     subgraph indexer["session-indexer.timer (30s, mechanical)"]
-        SF2["/srv/llm/sessions/*.jsonl"] --> IDX["SQLite session index\n(last_ts, turns, distilled_at)"]
+        SF2["/srv/llm/sessions/*.jsonl"] --> IDX["SQLite session index<br/>(last_ts, turns, distilled_at)"]
     end
     subgraph librarian["kb-ingest.timer (30s)"]
-        IDX --> Q{"quiesce via SQL\n+ slots idle?"}
-        Q -->|yes| D["distill DIRECT to :18080 slot 3\n(bypasses nginx — never logs itself)"]
+        IDX --> Q{"quiesce via SQL<br/>+ slots idle?"}
+        Q -->|yes| D["distill DIRECT to :18080 slot 3<br/>(bypasses nginx — never logs itself)"]
         D --> KB["~/kb patterns + git commit"]
         KB --> P["kb-publish → /srv/llm/{context,roles}"]
     end
@@ -40,13 +40,13 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-    O["owner (Telegram / chat)"] -->|approve / rule| F["foreman\n(Claude now; on-box loop PH3)"]
-    F -->|"brief (artifact contract)"| E["engineer session\n(pi-run, per-session stall watch)"]
-    E -->|"commit + gate"| G{"kb-gate\nFAIL = STOP"}
+    O["owner (Telegram / chat)"] -->|approve / rule| F["foreman<br/>(Claude now; on-box loop PH3)"]
+    F -->|"brief (artifact contract)"| E["engineer session<br/>(pi-run, per-session stall watch)"]
+    E -->|"commit + gate"| G{"kb-gate<br/>FAIL = STOP"}
     G -->|"GATED CLEAN"| V["foreman verify vs REAL targets"]
-    G -->|"FAIL"| A["adjudication\n(foreman/owner + evidence)"] --> V
+    G -->|"FAIL"| A["adjudication<br/>(foreman/owner + evidence)"] --> V
     V --> CL["CHANGELOG + this file updated"]
-    F -.->|"PH2: job supervisor\n(queue, concurrency 2)"| E
+    F -.->|"PH2: job supervisor<br/>(queue, concurrency 2)"| E
 ```
 
 ## Self-test loop (Rule 10)
@@ -54,10 +54,10 @@ flowchart LR
 ```mermaid
 flowchart TB
     subgraph daily["platform-test.timer (daily 06:00 UTC)"]
-        T["platform-test --telegram"] --> R["~/kb/tests/*.bats\n33 deterministic tests\nzero model calls"]
+        T["platform-test --telegram"] --> R["~/kb/tests/*.bats<br/>33 deterministic tests<br/>zero model calls"]
         R --> F{"any fail?"}
         F -->|"no"| OK["ALL GREEN — no alert"]
-        F -->|"yes"| AL["telegram-alert.sh\n(owner phone)"]
+        F -->|"yes"| AL["telegram-alert.sh<br/>(owner phone)"]
     end
     subgraph test_groups["10 test groups"]
         T1["starvation"]
@@ -104,10 +104,10 @@ flowchart TB
         L1F{any fail?}
     end
     subgraph layer2["Layer-2: model review (kb-review.sh)"]
-        MR["kb-review.sh → ornith/cloud\nadversarial pattern check"]
+        MR["kb-review.sh → ornith/cloud<br/>adversarial pattern check"]
     end
     subgraph sync["Foreman-only promotion"]
-        SYNC["sudo kb-gate-sync.sh\nsource → /srv/llm/gates/"]
+        SYNC["sudo kb-gate-sync.sh<br/>source → /srv/llm/gates/"]
     end
     S1 -->|"engineer edits + git commit"| S1
     S4 -->|"foreman runs (sudo)"| SYNC
@@ -135,26 +135,26 @@ buggy engineer session from disabling or modifying the gate itself.
 flowchart TB
     subgraph submit["pi-queue (engineer dispatch)"]
         P1["pi --print --session-id <SID>"] --> P2["pueue add --group engineer"]
-        P2 --> P3["systemd-run --scope\nRuntimeMaxSec + MemoryMax=4G\nMemorySwapMax=0"]
-        P3 --> P4["timeout --signal=TERM\n--kill-after=30"]
+        P2 --> P3["systemd-run --scope<br/>RuntimeMaxSec + MemoryMax=4G<br/>MemorySwapMax=0"]
+        P3 --> P4["timeout --signal=TERM<br/>--kill-after=30"]
     end
     subgraph supervise["pi-watch.timer (65s)"]
         W1["For each Running task in engineer group"] --> W2["Extract session ID from task command"]
         W2 --> W3["Check /srv/llm/sessions/YYYY-MM/<SID>.jsonl size"]
-        W3 --> W4{stalled?\n(no growth + no slot busy +\nno recent task-log mtime)\nfor 5 min?}
+        W3 --> W4{stalled?<br/>(no growth + no slot busy +<br/>no recent task-log mtime)<br/>for 5 min?}
         W4 -->|yes| W5["pueue kill <TASK_ID>"]
-        W4 -->|no| W6["Update marker file\nwith current size"]
+        W4 -->|no| W6["Update marker file<br/>with current size"]
     end
     subgraph verify["pi-queue post-submit"]
-        V1["pueue add returns TASK_ID"] --> V2["Poll pueue status 10s\nwait for Running state"]
+        V1["pueue add returns TASK_ID"] --> V2["Poll pueue status 10s<br/>wait for Running state"]
         V2 --> V3{task started?}
         V3 -->|no| V4["exit 126 with diagnostic"]
-        V3 -->|yes| V5["Wait for rc file\nfrom wrapper inside scope"]
+        V3 -->|yes| V5["Wait for rc file<br/>from wrapper inside scope"]
     end
     subgraph complete["Task completion"]
-        C1["rc file written by wrapper"] --> C2["Check log for model output\n(SSE data: lines or reasoning)"]
-        C2 --> C3{empty output?\n(rc=0 but <50 bytes +\nzero output lines)}
-        C3 -->|yes| C4["Rewrite rc=125 (WEDGE)\nwith diagnostic"]
+        C1["rc file written by wrapper"] --> C2["Check log for model output<br/>(SSE data: lines or reasoning)"]
+        C2 --> C3{empty output?<br/>(rc=0 but <50 bytes +<br/>zero output lines)}
+        C3 -->|yes| C4["Rewrite rc=125 (WEDGE)<br/>with diagnostic"]
         C3 -->|no| C5["Emit log + exit rc"]
     end
     P1 --> submit
@@ -205,23 +205,23 @@ identify violations"]
 flowchart TB
     subgraph guard["Privilege guard (incident-2 discharge)"]
         L["pi-run / pi-queue launch"] -->|"PATH prepend"| SH["engineer-sudo shim"]
-        SH -->|"systemctl stop/restart llama|nginx,\ngate-dir tamper, sudoers edit"| DENY["DENY rc=77 + log"]
+        SH -->|"systemctl stop/restart llama|nginx,<br/>gate-dir tamper, sudoers edit"| DENY["DENY rc=77 + log"]
         SH -->|"anything else"| FWD["log + forward to /usr/bin/sudo"]
     end
     subgraph fb["Cloud fallback (chaos-proven)"]
-        C[client] --> H1["hop-1 :8080\n+ X-LLM-Fallback-* headers\n(empty when X-No-Fallback)"]
-        H1 --> H2["hop-2 :8082\nproxy_pass primary upstream"]
-        H2 -->|"502/504"| NF["@cloud_fallback\nguard: empty header => 502\nlazy body: model swapped to adviser"]
+        C[client] --> H1["hop-1 :8080<br/>+ X-LLM-Fallback-* headers<br/>(empty when X-No-Fallback)"]
+        H1 --> H2["hop-2 :8082<br/>proxy_pass primary upstream"]
+        H2 -->|"502/504"| NF["@cloud_fallback<br/>guard: empty header => 502<br/>lazy body: model swapped to adviser"]
         NF --> CLOUD["free cloud tier"]
         H2 -->|"200"| LLM["local llama.cpp"]
     end
     subgraph loop["Foreman loop (skeleton GATED CLEAN; timer NOT armed)"]
-        Q["~/kb/queue/*.md briefs\n(frontmatter: risk-class, collar)"] --> FL["foreman-loop.sh"]
-        FL --> PW["plan -> gate (IMMUTABLE KERNEL)\n-> review -> execute -> verify\n-> changelog -> LEARNED"]
+        Q["~/kb/queue/*.md briefs<br/>(frontmatter: risk-class, collar)"] --> FL["foreman-loop.sh"]
+        FL --> PW["plan -> gate (IMMUTABLE KERNEL)<br/>-> review -> execute -> verify<br/>-> changelog -> LEARNED"]
         PW -->|"approve/deny"| TG2["Telegram owner gate"]
         PW -->|"same-step fail x2"| ESC["STOP + alert"]
-        FL -->|"capability-manifest.yaml"| CAP["vehicles, collar sizing,\ninterlocks, parallel lanes"]
+        FL -->|"capability-manifest.yaml"| CAP["vehicles, collar sizing,<br/>interlocks, parallel lanes"]
     end
     subgraph dr["Disaster recovery"]
-        KBGIT["~/kb git (canonical)"] -->|"post-commit hook, async"| MIR["github.com/gsrunion/steve-llm-kb\n(private mirror)"]
+        KBGIT["~/kb git (canonical)"] -->|"post-commit hook, async"| MIR["github.com/gsrunion/steve-llm-kb<br/>(private mirror)"]
     end

@@ -23,7 +23,7 @@ flowchart TB
     F -->|brief| E[Engineer agent]
     E -->|"claims: done"| G{Deterministic gates}
     G -->|FAIL = STOP| F
-    G -->|pass| V["Foreman verifies REALITY\n(execution beacons)"]
+    G -->|pass| V["Foreman verifies REALITY<br/>(execution beacons)"]
     V -->|proven| P[Change lands]
     V -->|claim ≠ reality| F
     P --> L[Librarian distills the session]

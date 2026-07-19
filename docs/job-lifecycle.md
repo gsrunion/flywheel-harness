@@ -6,33 +6,33 @@ transitions are live in the reference deployment; ⚠ marks gaps found during dr
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Picked: oldest pending brief\n(status → running)
+    [*] --> Picked: oldest pending brief<br/>(status → running)
 
     Picked --> Planning: Phase 1
-    Planning --> Gating: ## Plan ready\n(skipped if pre-seeded)
-    Planning --> Failed: collar timeout (rc 124/137)\n⚠ real jobs die here today\n(prompt-cache thrash, no KV reuse)
+    Planning --> Gating: ## Plan ready<br/>(skipped if pre-seeded)
+    Planning --> Failed: collar timeout (rc 124/137)<br/>⚠ real jobs die here today<br/>(prompt-cache thrash, no KV reuse)
 
     Gating --> Reviewing: layer-1 + gate PASS
-    Gating --> Failed: gate FAIL\n(deterministic, zero model calls)
+    Gating --> Failed: gate FAIL<br/>(deterministic, zero model calls)
 
-    Reviewing --> ApprovalGate: review done\n(advisory, non-fatal — never blocks)
+    Reviewing --> ApprovalGate: review done<br/>(advisory, non-fatal — never blocks)
 
-    ApprovalGate --> Executing: no approval required\nOR owner approves
+    ApprovalGate --> Executing: no approval required<br/>OR owner approves
     ApprovalGate --> Denied: owner denies
-    ApprovalGate --> ApprovalGate: poll for reply\n⚠ no timeout — hangs until\nsystemd 90-min kill
+    ApprovalGate --> ApprovalGate: poll for reply<br/>⚠ no timeout — hangs until<br/>systemd 90-min kill
 
-    Executing --> Verifying: work done,\nartifact + commit
+    Executing --> Verifying: work done,<br/>artifact + commit
     Executing --> Failed: execute error (rc≠0)
 
-    Verifying --> Recording: beacons resolve\n(≥1 required; 0 beacons = FAIL)
+    Verifying --> Recording: beacons resolve<br/>(≥1 required; 0 beacons = FAIL)
     Verifying --> Failed: beacon missing / unresolvable
 
     Recording --> Learning: changelog written (non-fatal)
     Learning --> Done: LEARNED + regression tests
 
     Done --> [*]: status → done
-    Denied --> [*]: status → denied\n(escalation exit)
-    Failed --> [*]: status → failed\n⚠ TERMINAL — no retry\n(escalation-at-2 is dead code)
+    Denied --> [*]: status → denied<br/>(escalation exit)
+    Failed --> [*]: status → failed<br/>⚠ TERMINAL — no retry<br/>(escalation-at-2 is dead code)
 ```
 
 ## The phases
