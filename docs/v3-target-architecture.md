@@ -19,6 +19,8 @@ flowchart TB
     FQA{"Feature QA<br/>feature impl + completeness"}:::planned
     ACC(("Product Owner<br/>accept"))
 
+    PE["Process Engineer<br/>monitors · adjusts · adds roles / gates / process"]:::meta
+
     FQ --> PO --> ARCH --> TQ --> W
     W -->|"task vague / incomplete"| ARCH
     W --> TQA
@@ -28,9 +30,26 @@ flowchart TB
     CTQ --> FQA
     FQA -->|"rejects"| PO
     FQA -->|"OKs"| ACC
+    PE -.->|"observes the whole pipeline"| TQA
+    PE -.->|"adds roles / gates / process"| ARCH
 
     classDef planned stroke-dasharray:5 5,opacity:0.85
+    classDef meta fill:#eef,stroke-dasharray:3 3,stroke-width:2px
 ```
+
+The **Process Engineer** is the recursive apex: it improves the *process*, not the
+product. It watches the pipeline and adds roles, gates, and process steps — the role
+that makes the *organization* self-improving, not just the tasks. Today it is done by
+hand (the foreman + Librarian + the rule-10 "incidents become gates" discipline); every
+gate and role added this session was the Process Engineer at work.
+
+Its guardrail is the strictest of all, because it can modify the governance itself:
+**the Process Engineer may freely ADD gates and roles, but WEAKENING a gate or amending
+the constitution is owner-ratified only.** It is the "who watches the watchmen" role, and
+it must never be able to relax its own constraints — the immutable kernel already enforces
+exactly this for the gates. Automating it is the true end-state (a platform that improves
+its own governance) and the most dangerous step; it comes last, and behind the tightest
+owner gate.
 
 ## Mapping to today
 
@@ -44,6 +63,7 @@ flowchart TB
 | **Feature QA** (whole feature complete) | **missing** | — (only per-task beacons verified) |
 | feature queue → task queue (two tiers) | **missing** | One flat queue |
 | **feedback edges** (revisit / rework / reject) | **missing** | *The no-retry gap the drills proved* |
+| **Process Engineer** (improves the process) | partial, by hand | Foreman + Librarian + rule-10 (incidents→gates) |
 
 ## What v3 adds, and why it's right
 
