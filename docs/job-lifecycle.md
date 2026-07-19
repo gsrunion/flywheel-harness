@@ -64,3 +64,28 @@ stateDiagram-v2
 These three converge into one layer — **retry-then-escalate with a faster plan phase** —
 which is also the minimal form of the work-decomposer: "a job failed, generate a
 continuation attempt" is a one-node decomposition.
+
+## Where is the loop?
+
+The diagram above is one *job's* lifecycle — it is linear and it terminates. The "loop"
+is two things, and the honest picture is that one exists outside it and one does not exist yet.
+
+```mermaid
+stateDiagram-v2
+    Idle --> Idle: timer tick, queue empty (exit, wait)
+    Idle --> JobPipeline: timer tick + pending job<br/>(the linear diagram above)
+    JobPipeline --> Idle: Done / Denied / Failed<br/>→ service EXITS, timer re-fires
+    JobPipeline --> JobPipeline: ⚠ PLANNED retry-once<br/>(Failed → re-plan; does NOT exist yet)
+    note right of Idle
+        The outer loop is the systemd
+        timer (every 10 min), NOT the
+        process. The service is a oneshot:
+        one job per tick, then exit.
+    end note
+```
+
+- **The outer loop is `foreman-loop.timer`** — external, every 10 min, one job per fire.
+  The linear job diagram is one turn of that crank.
+- **The inner loop (retry) does not exist.** A self-healing job needs a `Failed → Planning`
+  back-edge; there is none, so a transient failure is permanent. The absent loop in this
+  picture *is* the no-retry gap — the single most important thing the next build adds.
