@@ -80,6 +80,30 @@ owner gate.
   drill-1 failure proved absent (a failed job just died). The owner drew them before the drill
   demonstrated the need.
 
+## The recursion continues: Enterprise Process Engineer
+
+The roles form a fractal — each level does its work, improves the process at its scope,
+and is ratified by the level above:
+
+| Role | Improves | Scope |
+|---|---|---|
+| Worker | nothing (executes) | one task |
+| Architect | features (decomposes) | one feature |
+| Process Engineer | the process | one pipeline / deployment |
+| **Enterprise Process Engineer** | the process *across* pipelines | the fleet / the harness itself |
+
+The **Enterprise Process Engineer** standardizes gates and roles across every deployment,
+propagates a good gate found in one pipeline to all of them, benchmarks the industry for
+practices worth adopting, and allocates shared resources across orgs. **Its artifact is
+this repo.** The reference deployment has its own Process Engineer (per-instance); when a
+gate or pattern proves out there, extracting it — generalized — into flywheel-harness *is*
+the Enterprise Process Engineer promoting a local improvement to the shared standard. The
+prior-art survey (95 projects, 24 adopted mechanisms) was this role scanning the industry.
+
+Same guardrail, higher stakes: an enterprise-level change to the shared constitution
+propagates to every deployment, so *weakening* the standard is the most tightly
+owner-ratified action in the whole system. Adding is free; loosening is never automatic.
+
 ## The one hard prerequisite
 
 Every arrow is a governed model call. v3 has ~6 model stages per feature vs. ~2 today, so it
